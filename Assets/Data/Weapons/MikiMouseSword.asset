@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 235fb5b76d8105049ac7b00a7b90cba7, type: 3}
+  m_Name: MikiMouseSword
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  WeaponName: Weapon
+  WeaponType: sword
+  Damage: 99
+  Model: {fileID: 6400777163403016504, guid: 92fa6202adb454868a32cf7592cca735, type: 3}
+  Icon: {fileID: 21300004, guid: b93c3df3468123a48ae6da8f21a0ed54, type: 3}
+  HoldOffset: {x: 0, y: 0, z: 0}
+  HoldRotation: {x: 0, y: 0, z: 0}
+  HeavyAttackVFX: {fileID: 0}
+  LightAttack: {fileID: -203655887218126122, guid: 72745f36c9af4cf4fb6b1fe666b0863d, type: 3}
+  HeavyAttack: {fileID: -203655887218126122, guid: e19bfde86194c144498d8ec557a7993f, type: 3}
+  AttackSpeed: 1
+  LightHitTime: 0.4
+  LightRange: 1.5
+  LightRadius: 1.2
+  HeavyHitTime: 0.45
+  HeavyRadius: 3.5
+  HeavyDamageMultiplier: 2

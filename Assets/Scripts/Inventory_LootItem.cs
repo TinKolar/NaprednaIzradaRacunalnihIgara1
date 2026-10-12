@@ -7,7 +7,7 @@ using TMPro;
 public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public string ItemName;
-    public string ItemType; // weapon, potion, gear
+    public ItemType itemType; // weapon, potion, gear
     public WeaponData Weapon;
     public GearData Gear;
 
@@ -41,8 +41,8 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
     public bool IsEquipped()
     {
         Player_Inventory inv = GameObject.Find("GameManager").GetComponent<Player_Inventory>();
-        if (ItemType == "weapon") return transform.parent == inv.WeaponSlot.transform;
-        if (ItemType == "gear" && Gear != null)
+        if (itemType == ItemType.Weapon) return transform.parent == inv.WeaponSlot.transform;
+        if (itemType == ItemType.Necklace && Gear != null)
         {
             GameObject slot = SlotFor(inv, Gear.Slot);
             return slot != null && transform.parent == slot.transform;
@@ -66,7 +66,7 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
         Player_Inventory inv = GameObject.Find("GameManager").GetComponent<Player_Inventory>();
         Player_Controler player = GameObject.Find("Player").GetComponent<Player_Controler>();
 
-        if (ItemType == "weapon")
+        if (itemType == ItemType.Weapon)
         {
             if (transform.parent == inv.WeaponSlot.transform)
             {
@@ -97,7 +97,7 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
             }
             SFX.Play(SFX.Instance.Click, 0.6f);
         }
-        else if (ItemType == "gear" && Gear != null)
+        else if (temType == "gear" && Gear != null)
         {
             GameObject gearSlot = SlotFor(inv, Gear.Slot);
             if (gearSlot == null) return;
