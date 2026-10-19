@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,15 +8,52 @@ using UnityEngine.EventSystems;
 
 public class Player_Controler : MonoBehaviour
 {
-    public static int MaxHealth { get; set; } = 100;
-    public static int CurrentHealth { get; set; } = 50;
-    public static int RupleCurrency { get; set; } = 0;
+    //UI se pretplacuje na ove evente umjesto da cita vrijednosti svaki frame
+    //(pretplatnici se moraju odjaviti u OnDisable jer static eventi prezive ucitavanje scene)
+    public static event Action OnHealthChanged;   //CurrentHealth ili MaxHealth
+    public static event Action OnStaminaChanged;  //CurrentStamina ili MaxStamina
+    public static event Action OnRuplesChanged;
+    public static event Action OnStatsChanged;    //Damage, Armour, Speed
+
+    private static int _maxHealth = 100;
+    private static int _currentHealth = 50;
+    private static int _maxStamina = 100;
+    private static float _currentStamina = 100;
+    private static int _ruples = 0;
+    private static int _damage = 1;
+    private static int _armour = 1;
+    private static int _speed = 3;
+
+    public static int MaxHealth
+    {
+        get => _maxHealth;
+        set
+        {
+            if (!Set(ref _maxHealth, value, OnHealthChanged)) return;
+            CurrentHealth = _currentHealth; //ponovno clampa na novi max
+        }
+    }
+    public static int CurrentHealth
+    {
+        get => _currentHealth;
+        set => Set(ref _currentHealth, Mathf.Clamp(value, 0, _maxHealth), OnHealthChanged);
+    }
+    public static int RupleCurrency { get => _ruples; set => Set(ref _ruples, value, OnRuplesChanged); }
     public static int InventoryCapacity { get; set; } = 32;
-    public static int Damage { get; set; } = 1;
+    public static int Damage { get => _damage; set => Set(ref _damage, value, OnStatsChanged); }
     //steta trenutno equipanog oruzja (postavlja EquipWeapon)
-    public static int Armour { get; set; } = 1;
+    public static int Armour { get => _armour; set => Set(ref _armour, value, OnStatsChanged); }
     //Brzina kretanja playera u svim smjerovima. 1 = 16 px u sekundi.
-    public static int Speed { get; set; } = 3;
+    public static int Speed { get => _speed; set => Set(ref _speed, value, OnStatsChanged); }
+
+    //postavi vrijednost i javi event samo ako se stvarno promijenila
+    private static bool Set<T>(ref T field, T value, Action changed)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        changed?.Invoke();
+        return true;
+    }
 
     //osnovne vrijednosti bez opreme (RecalculateStats = osnova + oprema)
     public const int BASE_MAX_HEALTH = 100;
@@ -45,8 +83,8 @@ public class Player_Controler : MonoBehaviour
         MaxHealth = BASE_MAX_HEALTH + maxHp;
         Damage = BASE_DAMAGE + damage;
         Speed = BASE_SPEED + speed;
-        if (CurrentHealth > MaxHealth) CurrentHealth = MaxHealth;
 
+        //inventory panel jos uvijek slusa UnityEvente na UI_Controleru
         UI_Controler ui = gm.GetComponent<UI_Controler>();
         ui.OnChangedMaxHP.Invoke();
         ui.OnChangedHealth.Invoke();
@@ -55,8 +93,20 @@ public class Player_Controler : MonoBehaviour
         ui.OnChangedSpeed.Invoke();
     }
     //Stamina se trosi na napade i puni se kad player ne napada
-    public static int MaxStamina { get; set; } = 100;
-    public static float CurrentStamina { get; set; } = 100;
+    public static int MaxStamina
+    {
+        get => _maxStamina;
+        set
+        {
+            if (!Set(ref _maxStamina, value, OnStaminaChanged)) return;
+            CurrentStamina = _currentStamina; //ponovno clampa na novi max
+        }
+    }
+    public static float CurrentStamina
+    {
+        get => _currentStamina;
+        set => Set(ref _currentStamina, Mathf.Clamp(value, 0, _maxStamina), OnStaminaChanged);
+    }
     public float StaminaRegen = 20; //po sekundi
     public float LightAttackStamina = 15;
     public float HeavyAttackStamina = 40;
@@ -226,11 +276,8 @@ public class Player_Controler : MonoBehaviour
         _playerAttack();
         if (isAttacking == false)
         {
-            CurrentStamina = CurrentStamina + StaminaRegen * Time.deltaTime;
-            if (CurrentStamina > MaxStamina)
-            {
-                CurrentStamina = MaxStamina;
-            }
+            //setter clampa na MaxStamina, a kad je puna event se vise ne salje
+            CurrentStamina += StaminaRegen * Time.deltaTime;
             _playerMovementControl();
             _playerMouseMovement();
         }
