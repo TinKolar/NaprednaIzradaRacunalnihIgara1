@@ -1,36 +1,37 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
-[CreateAssetMenu(fileName = "ItemData", menuName = "Scriptable Objects/ItemData")]
-public class ItemData : ScriptableObject
+//Bazni podaci za svaki item: ime, ikona, rarity, opis
+//Nasljeduju ga EquippableData (oprema i oruzje) i ConsumableData (potioni)
+public abstract class ItemData : ScriptableObject
 {
-        public string ItemName = "Item";
-    public string Slot = "head"; // head, armour, gloves, boots, ring, amulet
+    [FormerlySerializedAs("WeaponName")]
+    public string ItemName = "Item";
     public Sprite Icon;
-    public string Rarity = "common"; // common, magic, rare
+    public Rarity Rarity = Rarity.Common;
     [TextArea] public string Description;
-
-    [Header("Bonusi")]
-
-    public int Damage;
+    [Tooltip("1 = ne stacka se")]
+    public int MaxStack = 1;
 }
 
+//Enumi se spremaju kao broj! Nove vrijednosti dodavati samo na kraj i ne mijenjati postojece brojeve.
 public enum Rarity
 {
-    Common =1,
-    Rare=2,
-    Epic=3,
-    Legendary=4
+    Common = 0,
+    Rare = 1,
+    Epic = 2,
+    Legendary = 3
 }
 
-public enum ItemType
+public enum EquipType
 {
-    Head=0,
-    Weapon=1,
-    Shield=2,
-    Ring=3,
-    Necklace=4,
-    Chest=5,
-    Boots=6,
-    Gloves=7,
-    Bag=8
+    Head = 0,
+    Chest = 1,
+    Gloves = 2,
+    Boots = 3,
+    Ring = 4,
+    Necklace = 5,
+    OneHanded = 6,
+    TwoHanded = 7,
+    Shield = 8
 }

@@ -2,10 +2,9 @@ using UnityEngine;
 
 //Podaci o oruzju. Animacije napada se kod equipa zamjene u animatoru (AnimatorOverrideController).
 [CreateAssetMenu(fileName = "NewWeapon", menuName = "Game/Weapon Data")]
-public class WeaponData : ItemData
+public class WeaponData : EquippableData
 {
-    public string WeaponName = "Weapon";
-    public ItemType WeaponType = ItemType.Weapon; // sword, axe, spear, unarmed...
+    //ime, ikona, Damage i EquipType (OneHanded / TwoHanded) dolaze iz EquippableData i ItemData
 
     [Header("Visuals")]
     public GameObject Model;          // model koji se pojavi u ruci

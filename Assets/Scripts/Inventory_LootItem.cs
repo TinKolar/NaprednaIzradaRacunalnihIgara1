@@ -2,14 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections.Generic;
 
-//Item u inventoryju koji dolazi iz loota. Desni klik: oruzje = equip/unequip, potion = popij.
+//Item u inventoryju koji dolazi iz loota. Desni klik: oprema/oruzje = equip/unequip, potion = popij.
 public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public string ItemName;
-    public ItemType itemType; // weapon, potion, gear
-    public WeaponData Weapon;
-    public GearData Gear;
+    public ItemData Data;
+    public int Amount = 1;
+    public TextMeshProUGUI AmountText;
+
+    public string ItemName { get { return Data != null ? Data.ItemName : name; } }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -26,33 +28,6 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
         ItemTooltip.Hide();
     }
 
-    //u koji equipment slot ide oprema
-    public static GameObject SlotFor(Player_Inventory inv, string slot)
-    {
-        if (slot == "head") return inv.HeadSlot;
-        if (slot == "armour") return inv.ArmourSlot;
-        if (slot == "gloves") return inv.GloveSlot;
-        if (slot == "boots") return inv.BootsSlot;
-        if (slot == "ring") return inv.RingSlot;
-        if (slot == "amulet") return inv.AmuletSlot;
-        return null;
-    }
-
-    public bool IsEquipped()
-    {
-        Player_Inventory inv = GameObject.Find("GameManager").GetComponent<Player_Inventory>();
-        if (itemType == ItemType.Weapon) return transform.parent == inv.WeaponSlot.transform;
-        if (itemType == ItemType.Necklace && Gear != null)
-        {
-            GameObject slot = SlotFor(inv, Gear.Slot);
-            return slot != null && transform.parent == slot.transform;
-        }
-        return false;
-    }
-    public int Amount = 1;
-    public int HealAmount = 30;
-    public TextMeshProUGUI AmountText;
-
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
@@ -61,92 +36,145 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
         }
     }
 
+    //slot na liku u kojem je item (null ako je u inventoryju)
+    public EquipSlot EquippedIn()
+    {
+        return transform.parent != null ? transform.parent.GetComponent<EquipSlot>() : null;
+    }
+
+    public bool IsEquipped()
+    {
+        return EquippedIn() != null;
+    }
+
     public void Use()
     {
-        Player_Inventory inv = GameObject.Find("GameManager").GetComponent<Player_Inventory>();
-        Player_Controler player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        if (Data is ConsumableData)
+        {
+            Drink((ConsumableData)Data);
+        }
+        else if (Data is EquippableData)
+        {
+            if (IsEquipped()) Unequip();
+            else Equip((EquippableData)Data);
+        }
+    }
 
-        if (itemType == ItemType.Weapon)
+    void Drink(ConsumableData potion)
+    {
+        Player_Controler player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        if (Player_Controler.CurrentHealth >= Player_Controler.MaxHealth || player.isDead)
         {
-            if (transform.parent == inv.WeaponSlot.transform)
-            {
-                //skini oruzje u inventory
-                Transform empty = FindEmptySlot();
-                if (empty == null)
-                {
-                    Debug.Log("Inventory is full!");
-                    return;
-                }
-                transform.SetParent(empty, false);
-                Fit(transform);
-                player.EquipWeapon(null);
-            }
-            else
-            {
-                //zamijeni s oruzjem koje je trenutno u ruci
-                Transform from = transform.parent;
-                if (inv.WeaponSlot.transform.childCount > 0)
-                {
-                    Transform old = inv.WeaponSlot.transform.GetChild(0);
-                    old.SetParent(from, false);
-                    Fit(old);
-                }
-                transform.SetParent(inv.WeaponSlot.transform, false);
-                Fit(transform);
-                player.EquipWeapon(Weapon);
-            }
-            SFX.Play(SFX.Instance.Click, 0.6f);
+            return;
         }
-        else if (temType == "gear" && Gear != null)
+        Player_Controler.CurrentHealth = Mathf.Min(Player_Controler.MaxHealth, Player_Controler.CurrentHealth + potion.HealAmount);
+        UI_Controler ui = GameObject.Find("GameManager").GetComponent<UI_Controler>();
+        ui.OnChangedHealth.Invoke();
+        SFX.Play(SFX.Instance.DrinkPotion);
+        Amount = Amount - 1;
+        RefreshAmount();
+        if (Amount <= 0)
         {
-            GameObject gearSlot = SlotFor(inv, Gear.Slot);
-            if (gearSlot == null) return;
-            if (transform.parent == gearSlot.transform)
-            {
-                //skini u inventory
-                Transform empty = FindEmptySlot();
-                if (empty == null)
-                {
-                    Debug.Log("Inventory is full!");
-                    return;
-                }
-                transform.SetParent(empty, false);
-                Fit(transform);
-            }
-            else
-            {
-                //zamijeni s onim sto je trenutno u slotu
-                Transform from = transform.parent;
-                if (gearSlot.transform.childCount > 0)
-                {
-                    Transform old = gearSlot.transform.GetChild(0);
-                    old.SetParent(from, false);
-                    Fit(old);
-                }
-                transform.SetParent(gearSlot.transform, false);
-                Fit(transform);
-            }
-            Player_Controler.RecalculateStats();
-            SFX.Play(SFX.Instance.Click, 0.6f);
-            ItemTooltip.Show(this);
+            Destroy(gameObject);
         }
-        else if (ItemType == "potion")
+    }
+
+    void Unequip()
+    {
+        Transform empty = FindEmptySlot();
+        if (empty == null)
         {
-            if (Player_Controler.CurrentHealth >= Player_Controler.MaxHealth || player.isDead)
+            Debug.Log("Inventory is full!");
+            return;
+        }
+        Move(transform, empty);
+        AfterEquipChange();
+    }
+
+    void Equip(EquippableData item)
+    {
+        Player_Inventory inv = GameObject.Find("GameManager").GetComponent<Player_Inventory>();
+        EquipSlot target = FindTargetSlot(inv, item);
+        if (target == null)
+        {
+            Debug.Log("Nema slota za " + item.ItemName);
+            return;
+        }
+
+        //sve sto mora van iz slotova: ono sto je trenutno u ciljnom slotu + pravila za dvoručno oruzje
+        List<Inventory_LootItem> displaced = new List<Inventory_LootItem>();
+        if (target.Current != null) displaced.Add(target.Current);
+        EquipSlot mainHand = inv.WeaponSlot.GetComponent<EquipSlot>();
+        EquipSlot offHand = inv.ShieldSlot.GetComponent<EquipSlot>();
+        if (item.EquipType == EquipType.TwoHanded && target == mainHand && offHand.Current != null)
+        {
+            displaced.Add(offHand.Current); //dvoručno oruzje oslobodi off hand
+        }
+        if (target == offHand && IsTwoHandedIn(mainHand))
+        {
+            displaced.Add(mainHand.Current); //stit/oruzje u off hand skida dvoručno oruzje
+        }
+
+        //prvi izbaceni ide na mjesto ovog itema, ostali traze prazan slot u inventoryju
+        Transform from = transform.parent;
+        List<Transform> free = new List<Transform>();
+        free.Add(from);
+        for (int i = 1; i < displaced.Count; i++)
+        {
+            Transform empty = FindEmptySlot(free);
+            if (empty == null)
             {
+                Debug.Log("Inventory is full!");
                 return;
             }
-            Player_Controler.CurrentHealth = Mathf.Min(Player_Controler.MaxHealth, Player_Controler.CurrentHealth + HealAmount);
-            UI_Controler ui = GameObject.Find("GameManager").GetComponent<UI_Controler>();
-            ui.OnChangedHealth.Invoke();
-            SFX.Play(SFX.Instance.DrinkPotion);
-            Amount = Amount - 1;
-            RefreshAmount();
-            if (Amount <= 0)
-            {
-                Destroy(gameObject);
-            }
+            free.Add(empty);
         }
+
+        Move(transform, target.transform);
+        for (int i = 0; i < displaced.Count; i++)
+        {
+            Move(displaced[i].transform, free[i]);
+        }
+        AfterEquipChange();
+    }
+
+    //prvi slobodan slot koji prima item, a ako ga nema prvi koji ga prima (zamjena)
+    static EquipSlot FindTargetSlot(Player_Inventory inv, EquippableData item)
+    {
+        EquipSlot mainHand = inv.WeaponSlot.GetComponent<EquipSlot>();
+        //dvoručno oruzje uvijek ide u main hand
+        if (item.EquipType == EquipType.TwoHanded) return mainHand.CanEquip(item) ? mainHand : null;
+
+        EquipSlot firstMatch = null;
+        foreach (EquipSlot slot in inv.EquipSlots())
+        {
+            if (!slot.CanEquip(item)) continue;
+            //off hand je "zauzet" dok je u main handu dvoručno oruzje
+            bool blocked = slot.gameObject == inv.ShieldSlot && IsTwoHandedIn(mainHand) && item.EquipType != EquipType.Shield;
+            if (slot.Current == null && !blocked) return slot;
+            if (firstMatch == null) firstMatch = slot;
+        }
+        return firstMatch;
+    }
+
+    static bool IsTwoHandedIn(EquipSlot slot)
+    {
+        Inventory_LootItem current = slot.Current;
+        return current != null && current.Data is EquippableData && ((EquippableData)current.Data).EquipType == EquipType.TwoHanded;
+    }
+
+    void AfterEquipChange()
+    {
+        Player_Controler player = GameObject.Find("Player").GetComponent<Player_Controler>();
+        player.RefreshEquipment();
+        SFX.Play(SFX.Instance.Click, 0.6f);
+        ItemTooltip.Show(this);
+    }
+
+    static void Move(Transform item, Transform slot)
+    {
+        item.SetParent(slot, false);
+        Fit(item);
     }
 
     public void RefreshAmount()
@@ -159,9 +187,15 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
 
     public static Transform FindEmptySlot()
     {
+        return FindEmptySlot(null);
+    }
+
+    //prazan slot u inventoryju koji nije u listi "taken"
+    public static Transform FindEmptySlot(List<Transform> taken)
+    {
         foreach (GameObject slot in Player_Inventory.Inventory)
         {
-            if (slot.transform.childCount == 0)
+            if (slot.transform.childCount == 0 && (taken == null || !taken.Contains(slot.transform)))
             {
                 return slot.transform;
             }
@@ -179,20 +213,17 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
         rt.localScale = Vector3.one;
     }
 
-    //Napravi item u slotu iz LootItem podataka
-    public static Inventory_LootItem Create(LootItem item, Transform slot)
+    //Napravi item u slotu iz ItemData
+    public static Inventory_LootItem Create(ItemData data, int amount, Transform slot)
     {
-        GameObject go = new GameObject(item.Name, typeof(RectTransform));
+        GameObject go = new GameObject(data.ItemName, typeof(RectTransform));
         go.transform.SetParent(slot, false);
         Fit(go.transform);
 
         Image img = go.AddComponent<Image>();
-        Sprite icon = item.Icon;
-        if (icon == null && item.Weapon != null) icon = item.Weapon.Icon;
-        if (icon == null && item.Gear != null) icon = item.Gear.Icon;
-        if (icon != null)
+        if (data.Icon != null)
         {
-            img.sprite = icon;
+            img.sprite = data.Icon;
             img.preserveAspect = true;
         }
         else
@@ -216,12 +247,8 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
         t.raycastTarget = false;
 
         Inventory_LootItem li = go.AddComponent<Inventory_LootItem>();
-        li.ItemName = item.Name;
-        li.ItemType = item.ItemType;
-        li.Weapon = item.Weapon;
-        li.Gear = item.Gear;
-        li.Amount = item.Amount;
-        li.HealAmount = item.HealAmount;
+        li.Data = data;
+        li.Amount = amount;
         li.AmountText = t;
         li.RefreshAmount();
         return li;

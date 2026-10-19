@@ -1,12 +1,7 @@
 using UnityEngine;
 
-//Oprema koja se moze equipat (kaciga, oklop, rukavice, cizme, prsten, ogrlica)
+//Oprema (kaciga, oklop, rukavice, cizme, prsten, ogrlica, stit). Sve potrebno je vec u EquippableData.
 [CreateAssetMenu(fileName = "NewGear", menuName = "Game/Gear Data")]
-public class GearData : ItemData
+public class GearData : EquippableData
 {
-    [Header("Bonusi")]
-    public int Armour;
-    public int MaxHealth;
-
-    public int Speed;
 }
