@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Jade_Amulet
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Jade Amulet
-  Slot: amulet
   Icon: {fileID: -5041677450866258077, guid: 65da872270670f6479be35bf12c3c23f, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 5
+  Damage: 0
   Armour: 2
   MaxHealth: 10
-  Damage: 0
   Speed: 0

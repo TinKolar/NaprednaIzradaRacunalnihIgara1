@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Iron_Gauntlets
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Iron Gauntlets
-  Slot: gloves
   Icon: {fileID: -7085474586459482995, guid: ef0c1a2f6283514418defa90dbd76f65, type: 3}
-  Rarity: common
+  Rarity: 0
   Description: 
+  MaxStack: 1
+  EquipType: 2
+  Damage: 0
   Armour: 2
   MaxHealth: 0
-  Damage: 0
   Speed: 0

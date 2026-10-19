@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Plate_Greaves
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Plate Greaves
-  Slot: boots
   Icon: {fileID: -5546064669409388962, guid: 6eb618d8a79c0a44894aa479c1467d94, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 3
+  Damage: 0
   Armour: 3
   MaxHealth: 0
-  Damage: 0
   Speed: 1

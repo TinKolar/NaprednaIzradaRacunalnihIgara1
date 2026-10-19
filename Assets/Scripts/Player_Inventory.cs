@@ -20,6 +20,19 @@ public class Player_Inventory : MonoBehaviour
     public GameObject BootsSlot;
     public GameObject BagSlot;
     public GameObject AmuletSlot;
+    public GameObject Ring2Slot;
+
+    //svi slotovi na liku koji imaju EquipSlot (main hand = WeaponSlot, off hand = ShieldSlot)
+    public List<EquipSlot> EquipSlots()
+    {
+        List<EquipSlot> list = new List<EquipSlot>();
+        GameObject[] all = { HeadSlot, ArmourSlot, GloveSlot, BootsSlot, AmuletSlot, RingSlot, Ring2Slot, WeaponSlot, ShieldSlot };
+        foreach (GameObject go in all)
+        {
+            if (go != null && go.GetComponent<EquipSlot>() != null) list.Add(go.GetComponent<EquipSlot>());
+        }
+        return list;
+    }
 
     public GameObject InventoryGrid;
     public GameObject InventorySlot;

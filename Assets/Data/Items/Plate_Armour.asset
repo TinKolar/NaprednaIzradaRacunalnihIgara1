@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Plate_Armour
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Plate Armour
-  Slot: armour
   Icon: {fileID: 1052969489712825857, guid: 5c905719cfcfd364aacf1356972c6bdd, type: 3}
-  Rarity: rare
+  Rarity: 2
   Description: Heavy, but very sturdy.
+  MaxStack: 1
+  EquipType: 1
+  Damage: 0
   Armour: 7
   MaxHealth: 20
-  Damage: 0
   Speed: 0

@@ -69,7 +69,7 @@ public class UI_Controler : MonoBehaviour
     private void _changeDamage()
     {
         //osnovna steta + steta oruzja
-        InventoryDamage.text = (Player_Controler.Damage + Player_Controler.WeaponDamage).ToString();
+        InventoryDamage.text = Player_Controler.Damage.ToString();
     }
     private void _changeArmour()
     {

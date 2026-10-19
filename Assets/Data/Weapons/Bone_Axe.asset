@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235fb5b76d8105049ac7b00a7b90cba7, type: 3}
   m_Name: Bone_Axe
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: Bone Axe
-  WeaponType: axe
-  Damage: 5
-  Model: {fileID: 4636273493064297201, guid: 5957bbfd12462324c9743f07f51838bd, type: 3}
+  ItemName: Bone Axe
   Icon: {fileID: -5822795761849740562, guid: 2a41a2ef919ff184b8eb96af90313ceb, type: 3}
+  Rarity: 0
+  Description: 
+  MaxStack: 1
+  EquipType: 6
+  Damage: 5
+  Armour: 0
+  MaxHealth: 0
+  Speed: 0
+  Model: {fileID: 4636273493064297201, guid: 5957bbfd12462324c9743f07f51838bd, type: 3}
   HoldOffset: {x: 0, y: 0, z: 0}
   HoldRotation: {x: 0, y: 0, z: 0}
   HeavyAttackVFX: {fileID: 7396515142774620206, guid: e3a593ee4ab33f242b61a9d68c8a61c5, type: 3}

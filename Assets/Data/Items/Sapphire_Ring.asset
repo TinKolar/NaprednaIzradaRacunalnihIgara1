@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Sapphire_Ring
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Sapphire Ring
-  Slot: ring
   Icon: {fileID: -6471596342637262122, guid: bd2a92651bb736047b2c39f26e1624e5, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 4
+  Damage: 0
   Armour: 0
   MaxHealth: 15
-  Damage: 0
   Speed: 0

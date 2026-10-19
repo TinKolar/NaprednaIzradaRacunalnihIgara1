@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235fb5b76d8105049ac7b00a7b90cba7, type: 3}
   m_Name: Basic_Sword
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: Longsword
-  WeaponType: sword
-  Damage: 2
-  Model: {fileID: 6400777163403016504, guid: 170c20833ec66fa44ac93a09574ab585, type: 3}
+  ItemName: Longsword
   Icon: {fileID: -4239846758799542297, guid: 6d643f7e08b75264c884d00256ee245e, type: 3}
+  Rarity: 0
+  Description: 
+  MaxStack: 1
+  EquipType: 6
+  Damage: 2
+  Armour: 0
+  MaxHealth: 0
+  Speed: 0
+  Model: {fileID: 6400777163403016504, guid: 170c20833ec66fa44ac93a09574ab585, type: 3}
   HoldOffset: {x: 0, y: 0, z: 0}
   HoldRotation: {x: 0, y: 0, z: 0}
   HeavyAttackVFX: {fileID: 7396515142774620206, guid: e3a593ee4ab33f242b61a9d68c8a61c5, type: 3}

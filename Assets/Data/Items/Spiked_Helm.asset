@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Spiked_Helm
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Spiked Helm
-  Slot: head
   Icon: {fileID: 7862094328626289090, guid: 1a8eb8a39dd8ff54eae129c3ba458397, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 0
+  Damage: 1
   Armour: 2
   MaxHealth: 0
-  Damage: 1
   Speed: 0

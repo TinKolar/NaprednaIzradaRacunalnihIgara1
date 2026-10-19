@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Plate_Claws
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Plate Claws
-  Slot: gloves
   Icon: {fileID: 4008627345246242305, guid: 728c09e39b8fd9f41b52ce982948ab46, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 2
+  Damage: 2
   Armour: 2
   MaxHealth: 0
-  Damage: 2
   Speed: 0

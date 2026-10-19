@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Golden_Fist
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Golden Fist
-  Slot: gloves
   Icon: {fileID: -1922813827272704058, guid: 3c0badf90a593434faaa93cdcf9eb9d1, type: 3}
-  Rarity: rare
+  Rarity: 2
   Description: Hits like a falling bell.
+  MaxStack: 1
+  EquipType: 2
+  Damage: 3
   Armour: 1
   MaxHealth: 0
-  Damage: 3
   Speed: 0

@@ -81,7 +81,7 @@ public class Loot_Window : MonoBehaviour
 
     private void takeItem(LootItem item)
     {
-        if (item.ItemType == "ruple")
+        if (item.Ruples)
         {
             Player_Controler.RupleCurrency += item.Amount;
             UiControler.OnChangedRuples.Invoke();
@@ -91,13 +91,13 @@ public class Loot_Window : MonoBehaviour
             return;
         }
 
-        //potioni se stackaju na postojeci
-        if (item.ItemType == "potion")
+        //itemi s MaxStack > 1 (potioni) se stackaju na postojeci
+        if (item.Item != null && item.Item.MaxStack > 1)
         {
             foreach (GameObject slot in Player_Inventory.Inventory)
             {
                 Inventory_LootItem existing = slot.GetComponentInChildren<Inventory_LootItem>();
-                if (existing != null && existing.ItemType == "potion" && existing.ItemName == item.Name)
+                if (existing != null && existing.Data == item.Item && existing.Amount + item.Amount <= item.Item.MaxStack)
                 {
                     existing.Amount += item.Amount;
                     existing.RefreshAmount();
@@ -125,9 +125,13 @@ public class Loot_Window : MonoBehaviour
                         newItem.GetComponent<Stack>().OnValueChanged.Invoke();
                     }
                 }
+                else if (item.Item != null)
+                {
+                    newItem = Inventory_LootItem.Create(item.Item, item.Amount, slot.transform).gameObject;
+                }
                 else
                 {
-                    newItem = Inventory_LootItem.Create(item, slot.transform).gameObject;
+                    newItem = makePlaceholder(item, slot.transform);
                 }
                 Debug.Log("Looted " + item.Name);
                 currentBag.Items.Remove(item);
@@ -162,9 +166,7 @@ public class Loot_Window : MonoBehaviour
         rt.offsetMin = new Vector2(3, 3);
         rt.offsetMax = new Vector2(-3, -3);
         Image img = icon.AddComponent<Image>();
-        if (item.ItemType == "weapon") img.color = new Color(0.75f, 0.3f, 0.25f);
-        else if (item.ItemType == "stackable") img.color = new Color(0.3f, 0.6f, 0.3f);
-        else img.color = new Color(0.35f, 0.45f, 0.7f);
+        img.color = new Color(0.35f, 0.45f, 0.7f);
 
         GameObject txt = new GameObject("Name", typeof(RectTransform));
         txt.transform.SetParent(icon.transform, false);

@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235fb5b76d8105049ac7b00a7b90cba7, type: 3}
   m_Name: Jagged_Blade
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: Jagged Blade
-  WeaponType: sword
-  Damage: 4
-  Model: {fileID: 1148023034579920388, guid: 48ea54f22e3f704458682a956cd4b519, type: 3}
+  ItemName: Jagged Blade
   Icon: {fileID: 4135829422965561627, guid: 56a9ba22e2997f04b8e94de222a71ff2, type: 3}
+  Rarity: 0
+  Description: 
+  MaxStack: 1
+  EquipType: 6
+  Damage: 4
+  Armour: 0
+  MaxHealth: 0
+  Speed: 0
+  Model: {fileID: 1148023034579920388, guid: 48ea54f22e3f704458682a956cd4b519, type: 3}
   HoldOffset: {x: 0, y: 0, z: 0}
   HoldRotation: {x: 0, y: 0, z: 0}
   HeavyAttackVFX: {fileID: 7396515142774620206, guid: e3a593ee4ab33f242b61a9d68c8a61c5, type: 3}

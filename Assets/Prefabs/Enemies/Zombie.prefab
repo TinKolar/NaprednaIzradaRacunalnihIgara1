@@ -440,7 +440,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: de7ac255fb9bde8428e56d5a840c74d0, type: 2}
   WeaponDropChance: 0.35
   PotionDropChance: 0.5
-  PotionIcon: {fileID: -5852593073396551392, guid: af9e5d72572347e49860cd9c7571e473, type: 3}
+  PotionDrop: {fileID: 11400000, guid: 4dd65e3ab629e6a49813c7bca3750090, type: 2}
   GearDrops:
   - {fileID: 11400000, guid: af0ef5351ffe48c448f160c18028f82d, type: 2}
   - {fileID: 11400000, guid: f774822bbb7bd8f468da03ac78ba5714, type: 2}
@@ -457,6 +457,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f82c1f0fb01003248a161a0c53410e7f, type: 2}
   GearDropChance: 0.35
   RunAnimationSpeed: 3
+  StepDistance: 1.2
+  MinGrowlTime: 6
+  MaxGrowlTime: 14
 --- !u!114 &4442958644237940292
 MonoBehaviour:
   m_ObjectHideFlags: 0

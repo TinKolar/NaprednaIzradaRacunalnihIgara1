@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Amber_Necklace
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Amber Necklace
-  Slot: amulet
   Icon: {fileID: 10226826228325931, guid: 10f17ef15fab06c488d01ef99f43f256, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 5
+  Damage: 0
   Armour: 0
   MaxHealth: 20
-  Damage: 0
   Speed: 0

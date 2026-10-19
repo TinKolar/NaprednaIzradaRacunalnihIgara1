@@ -4,14 +4,19 @@ using UnityEngine;
 [System.Serializable]
 public class LootItem
 {
-    public string Name;
-    public string ItemType; // weapon, potion, ruple, stackable...
+    public ItemData Item;            // oprema, oruzje ili potion (null + Ruples = novac)
     public int Amount = 1;
-    public GameObject InventoryItem; // prefab za inventory, ako je prazno radi se Inventory_LootItem
-    public WeaponData Weapon;        // za ItemType = weapon
-    public GearData Gear;            // za ItemType = gear
-    public Sprite Icon;              // za potione i ostalo (oruzje uzima ikonu iz WeaponData)
-    public int HealAmount = 30;      // za ItemType = potion
+    public bool Ruples;              // novac nije item, ide ravno u RupleCurrency
+    public GameObject InventoryItem; // stari sustav: prefab za inventory
+
+    public string Name
+    {
+        get
+        {
+            if (Ruples) return "Ruples";
+            return Item != null ? Item.ItemName : "?";
+        }
+    }
 }
 
 public class Loot_Bag : MonoBehaviour

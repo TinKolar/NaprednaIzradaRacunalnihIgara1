@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Iron_Boots
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Iron Boots
-  Slot: boots
   Icon: {fileID: 2479723112504211984, guid: 77b84eb6ced7e4248a719782b0323b6c, type: 3}
-  Rarity: common
+  Rarity: 0
   Description: 
+  MaxStack: 1
+  EquipType: 3
+  Damage: 0
   Armour: 2
   MaxHealth: 0
-  Damage: 0
   Speed: 0

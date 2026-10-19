@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Signet_Ring
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Signet Ring
-  Slot: ring
   Icon: {fileID: 6587246987603315053, guid: d89df4f03fbeb1845be0449e38cbccc7, type: 3}
-  Rarity: common
+  Rarity: 0
   Description: 
+  MaxStack: 1
+  EquipType: 4
+  Damage: 1
   Armour: 1
   MaxHealth: 0
-  Damage: 1
   Speed: 0

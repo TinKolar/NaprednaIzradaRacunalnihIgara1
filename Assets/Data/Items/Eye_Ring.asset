@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Eye_Ring
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Ring of the Watcher
-  Slot: ring
   Icon: {fileID: 8081725102136230073, guid: dff99ffdf6a6bbf40a3149e07f2d2d45, type: 3}
-  Rarity: rare
+  Rarity: 2
   Description: It never blinks.
+  MaxStack: 1
+  EquipType: 4
+  Damage: 2
   Armour: 0
   MaxHealth: 0
-  Damage: 2
   Speed: 0

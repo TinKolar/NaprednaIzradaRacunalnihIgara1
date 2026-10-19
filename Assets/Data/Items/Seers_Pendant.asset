@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Seers_Pendant
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Seer's Pendant
-  Slot: amulet
   Icon: {fileID: 2149707418013349315, guid: 70ad5f63831bcbf4b9e6d503f0e22ed5, type: 3}
-  Rarity: rare
+  Rarity: 2
   Description: Shows what lies ahead.
+  MaxStack: 1
+  EquipType: 5
+  Damage: 2
   Armour: 0
   MaxHealth: 5
-  Damage: 2
   Speed: 0

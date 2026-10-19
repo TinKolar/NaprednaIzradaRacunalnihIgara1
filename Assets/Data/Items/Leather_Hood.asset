@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Leather_Hood
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Leather Hood
-  Slot: head
   Icon: {fileID: 5190352501917930185, guid: ab8d8f84492b28240a155edb2d881475, type: 3}
-  Rarity: common
+  Rarity: 0
   Description: 
+  MaxStack: 1
+  EquipType: 0
+  Damage: 0
   Armour: 1
   MaxHealth: 5
-  Damage: 0
   Speed: 0

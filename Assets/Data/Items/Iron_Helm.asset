@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Iron_Helm
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Iron Helm
-  Slot: head
   Icon: {fileID: -4453926250692514614, guid: 9e1809c07ae24eb4a9fe88a607169111, type: 3}
-  Rarity: common
+  Rarity: 0
   Description: 
+  MaxStack: 1
+  EquipType: 0
+  Damage: 0
   Armour: 3
   MaxHealth: 0
-  Damage: 0
   Speed: 0

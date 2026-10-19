@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235fb5b76d8105049ac7b00a7b90cba7, type: 3}
   m_Name: Heavy_Axe
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: Battle Axe
-  WeaponType: axe
-  Damage: 6
-  Model: {fileID: 7028293311919458354, guid: 372559d059be7c44fbe65d081f9fa155, type: 3}
+  ItemName: Battle Axe
   Icon: {fileID: -4259738164875182027, guid: 435dac7b7ceaf2c4b839a32ddfd6b50c, type: 3}
+  Rarity: 0
+  Description: 
+  MaxStack: 1
+  EquipType: 7
+  Damage: 6
+  Armour: 0
+  MaxHealth: 0
+  Speed: 0
+  Model: {fileID: 7028293311919458354, guid: 372559d059be7c44fbe65d081f9fa155, type: 3}
   HoldOffset: {x: 0, y: 0, z: 0}
   HoldRotation: {x: 0, y: 0, z: 0}
   HeavyAttackVFX: {fileID: 7396515142774620206, guid: e3a593ee4ab33f242b61a9d68c8a61c5, type: 3}

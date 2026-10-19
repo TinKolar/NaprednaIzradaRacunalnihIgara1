@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     public System.Collections.Generic.List<WeaponData> WeaponDrops = new System.Collections.Generic.List<WeaponData>();
     [Range(0, 1)] public float WeaponDropChance = 0.35f;
     [Range(0, 1)] public float PotionDropChance = 0.5f;
-    public Sprite PotionIcon;
+    public ConsumableData PotionDrop;
     public System.Collections.Generic.List<GearData> GearDrops = new System.Collections.Generic.List<GearData>();
     [Range(0, 1)] public float GearDropChance = 0.3f;
 
@@ -146,20 +146,20 @@ public class Enemy : MonoBehaviour
         GameObject bag = Instantiate(LootBagPrefab, pos, Quaternion.Euler(0, Random.Range(0, 360), 0));
         Loot_Bag loot = bag.GetComponent<Loot_Bag>();
         loot.Items.Clear();
-        loot.Items.Add(new LootItem { Name = "Ruples", ItemType = "ruple", Amount = Random.Range(MinRuples, MaxRuples + 1) });
-        if (Random.value < PotionDropChance)
+        loot.Items.Add(new LootItem { Ruples = true, Amount = Random.Range(MinRuples, MaxRuples + 1) });
+        if (PotionDrop != null && Random.value < PotionDropChance)
         {
-            loot.Items.Add(new LootItem { Name = "Health Potion", ItemType = "potion", Amount = Random.Range(1, 3), Icon = PotionIcon, HealAmount = 30 });
+            loot.Items.Add(new LootItem { Item = PotionDrop, Amount = Random.Range(1, 3) });
         }
         if (GearDrops.Count > 0 && Random.value < GearDropChance)
         {
             GearData g = GearDrops[Random.Range(0, GearDrops.Count)];
-            loot.Items.Add(new LootItem { Name = g.ItemName, ItemType = "gear", Gear = g });
+            loot.Items.Add(new LootItem { Item = g });
         }
         if (WeaponDrops.Count > 0 && Random.value < WeaponDropChance)
         {
             WeaponData w = WeaponDrops[Random.Range(0, WeaponDrops.Count)];
-            loot.Items.Add(new LootItem { Name = w.WeaponName, ItemType = "weapon", Weapon = w });
+            loot.Items.Add(new LootItem { Item = w });
         }
     }
 

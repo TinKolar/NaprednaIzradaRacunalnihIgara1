@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Emerald_Ring
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Emerald Ring
-  Slot: ring
   Icon: {fileID: 4027764501971346675, guid: a060fc1e86605f4499ef32a2034bee5f, type: 3}
-  Rarity: magic
+  Rarity: 1
   Description: 
+  MaxStack: 1
+  EquipType: 4
+  Damage: 1
   Armour: 0
   MaxHealth: 5
-  Damage: 1
   Speed: 0

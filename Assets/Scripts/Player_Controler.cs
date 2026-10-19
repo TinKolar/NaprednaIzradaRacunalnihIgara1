@@ -13,7 +13,6 @@ public class Player_Controler : MonoBehaviour
     public static int InventoryCapacity { get; set; } = 32;
     public static int Damage { get; set; } = 1;
     //steta trenutno equipanog oruzja (postavlja EquipWeapon)
-    public static int WeaponDamage { get; set; } = 0;
     public static int Armour { get; set; } = 1;
     //Brzina kretanja playera u svim smjerovima. 1 = 16 px u sekundi.
     public static int Speed { get; set; } = 3;
@@ -31,16 +30,16 @@ public class Player_Controler : MonoBehaviour
         GameObject gm = GameObject.Find("GameManager");
         if (gm == null) return;
         Player_Inventory inv = gm.GetComponent<Player_Inventory>();
-        GameObject[] slots = { inv.HeadSlot, inv.ArmourSlot, inv.GloveSlot, inv.BootsSlot, inv.RingSlot, inv.AmuletSlot };
-        foreach (GameObject slot in slots)
+        //oruzje se zbraja isto kao i ostala oprema
+        foreach (EquipSlot slot in inv.EquipSlots())
         {
-            if (slot == null || slot.transform.childCount == 0) continue;
-            Inventory_LootItem item = slot.transform.GetChild(0).GetComponent<Inventory_LootItem>();
-            if (item == null || item.Gear == null) continue;
-            armour += item.Gear.Armour;
-            maxHp += item.Gear.MaxHealth;
-            damage += item.Gear.Damage;
-            speed += item.Gear.Speed;
+            Inventory_LootItem item = slot.Current;
+            if (item == null || !(item.Data is EquippableData)) continue;
+            EquippableData e = (EquippableData)item.Data;
+            armour += e.Armour;
+            maxHp += e.MaxHealth;
+            damage += e.Damage;
+            speed += e.Speed;
         }
         Armour = BASE_ARMOUR + armour;
         MaxHealth = BASE_MAX_HEALTH + maxHp;
@@ -86,6 +85,8 @@ public class Player_Controler : MonoBehaviour
     public GameObject DefaultHeavyVFX;
     public float HeavyVFXLead = 0.4f; //koliko sekundi prije udarca se pali slash efekt
     private GameObject _weaponModel;
+    public Transform OffHandSocket; //ako je prazno uzme se lijeva ruka iz animatora
+    private GameObject _offHandModel;
 
     void Start()
     {
@@ -119,8 +120,9 @@ public class Player_Controler : MonoBehaviour
             Player_Inventory inv = gm.GetComponent<Player_Inventory>();
             if (inv != null && inv.WeaponSlot.transform.childCount == 0)
             {
-                Inventory_LootItem.Create(new LootItem { Name = CurrentWeapon.WeaponName, ItemType = "weapon", Weapon = CurrentWeapon }, inv.WeaponSlot.transform);
+                Inventory_LootItem.Create(CurrentWeapon, 1, inv.WeaponSlot.transform);
             }
+            RecalculateStats(); //damage pocetnog oruzja
         }
     }
 
@@ -142,14 +144,6 @@ public class Player_Controler : MonoBehaviour
         _overrideController[HeavyAttackPlaceholder] = heavy;
         _playerAnimator.SetFloat("AttackSpeed", speed);
 
-        //update atributa (damage)
-        WeaponDamage = weapon != null ? weapon.Damage : 0;
-        GameObject gameManager = GameObject.Find("GameManager");
-        if (gameManager != null && gameManager.GetComponent<UI_Controler>() != null)
-        {
-            gameManager.GetComponent<UI_Controler>().OnChangedDamage.Invoke();
-        }
-
         //model oruzja u ruci
         if (_weaponModel != null)
         {
@@ -165,7 +159,30 @@ public class Player_Controler : MonoBehaviour
                 Destroy(c);
             }
         }
-        Debug.Log("Equipped " + (weapon != null ? weapon.WeaponName : "nothing"));
+        Debug.Log("Equipped " + (weapon != null ? weapon.ItemName : "nothing"));
+    }
+
+    //Zove se nakon svakog equip/unequip: oruzje u main handu, model u off handu i statsi
+    public void RefreshEquipment()
+    {
+        Player_Inventory inv = GameObject.Find("GameManager").GetComponent<Player_Inventory>();
+        Inventory_LootItem main = inv.WeaponSlot.GetComponent<EquipSlot>().Current;
+        Inventory_LootItem off = inv.ShieldSlot.GetComponent<EquipSlot>().Current;
+        WeaponData mainWeapon = main != null ? main.Data as WeaponData : null;
+        if (mainWeapon != CurrentWeapon) EquipWeapon(mainWeapon);
+
+        //off hand (drugo oruzje) samo vizualno + statsi, napadi idu s main hand oruzjem
+        if (_offHandModel != null) Destroy(_offHandModel);
+        if (OffHandSocket == null) OffHandSocket = _playerAnimator.GetBoneTransform(HumanBodyBones.LeftHand);
+        WeaponData offWeapon = off != null ? off.Data as WeaponData : null;
+        if (offWeapon != null && offWeapon.Model != null && OffHandSocket != null)
+        {
+            _offHandModel = Instantiate(offWeapon.Model, OffHandSocket);
+            _offHandModel.transform.localPosition = offWeapon.HoldOffset;
+            _offHandModel.transform.localRotation = Quaternion.Euler(offWeapon.HoldRotation);
+            foreach (Collider c in _offHandModel.GetComponentsInChildren<Collider>()) Destroy(c);
+        }
+        RecalculateStats();
     }
 
     private AnimationClip currentLightClip()
@@ -188,8 +205,7 @@ public class Player_Controler : MonoBehaviour
 
     private int weaponDamage()
     {
-        if (CurrentWeapon != null) return Damage + CurrentWeapon.Damage;
-        return Damage;
+        return Damage; //damage oruzja je vec u Damage (RecalculateStats)
     }
 
 

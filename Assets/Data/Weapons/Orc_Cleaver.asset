@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235fb5b76d8105049ac7b00a7b90cba7, type: 3}
   m_Name: Orc_Cleaver
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  WeaponName: Orc Cleaver
-  WeaponType: sword
-  Damage: 3
-  Model: {fileID: 8582127908027947593, guid: 99e7c339237ec9b4894e0b0475564521, type: 3}
+  ItemName: Orc Cleaver
   Icon: {fileID: 8360878930269545726, guid: dd7c028de9fdae145b26ec0a60c3ecb4, type: 3}
+  Rarity: 0
+  Description: 
+  MaxStack: 1
+  EquipType: 6
+  Damage: 3
+  Armour: 0
+  MaxHealth: 0
+  Speed: 0
+  Model: {fileID: 8582127908027947593, guid: 99e7c339237ec9b4894e0b0475564521, type: 3}
   HoldOffset: {x: 0, y: 0, z: 0}
   HoldRotation: {x: 0, y: 0, z: 0}
   HeavyAttackVFX: {fileID: 7396515142774620206, guid: e3a593ee4ab33f242b61a9d68c8a61c5, type: 3}

@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Iron_Cuirass
   m_EditorClassIdentifier: Assembly-CSharp::GearData
   ItemName: Iron Cuirass
-  Slot: armour
   Icon: {fileID: 7489084882504950532, guid: e81ea21a16c7386409ec1e12530555df, type: 3}
-  Rarity: common
+  Rarity: 0
   Description: 
+  MaxStack: 1
+  EquipType: 1
+  Damage: 0
   Armour: 4
   MaxHealth: 10
-  Damage: 0
   Speed: 0
