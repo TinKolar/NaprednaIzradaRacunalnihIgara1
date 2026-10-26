@@ -27,7 +27,7 @@ public class UI_Controler : MonoBehaviour
     public UnityEvent OnChangedRuples;
 
     public GameObject Tooltip;
-    private PlayerStats _stats;
+    [SerializeField] private PlayerStats _stats;
 
     private void Start()
     {
@@ -35,7 +35,7 @@ public class UI_Controler : MonoBehaviour
         OnChangedRuples.Invoke();
 
         //atributi se sami osvjeze kad se stat promijeni
-        _stats = GameObject.Find("Player").GetComponent<PlayerStats>();
+        //_stats = GameObject.Find("Player").GetComponent<PlayerStats>();
         _stats.Health.CurrentChanged += _changeHealth;
         _stats.Armour.Changed += value => InventoryArmour.text = Mathf.RoundToInt(value).ToString();
         _stats.Damage.Changed += value => InventoryDamage.text = Mathf.RoundToInt(value).ToString();

@@ -16518,26 +16518,11 @@ MonoBehaviour:
   InventoryDamage: {fileID: 2012042979}
   InventoryArmour: {fileID: 2012042978}
   InventorySpeed: {fileID: 2012042977}
-  OnChangedHealth:
-    m_PersistentCalls:
-      m_Calls: []
-  OnChangedMaxHP:
-    m_PersistentCalls:
-      m_Calls: []
   OnChangedRuples:
     m_PersistentCalls:
       m_Calls: []
-  OnChangedDamage:
-    m_PersistentCalls:
-      m_Calls: []
-  OnChangedArmour:
-    m_PersistentCalls:
-      m_Calls: []
-  OnChangedSpeed:
-    m_PersistentCalls:
-      m_Calls: []
-  PlayerAnimator: {fileID: 2121797955}
   Tooltip: {fileID: 2012042967}
+  _stats: {fileID: 2121797958}
 --- !u!114 &949337107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37065,11 +37050,6 @@ MonoBehaviour:
   isDead: 0
   LootClickRange: 2.5
   StepDistance: 1.4
---- !u!95 &2121797955 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5648684134342513095, guid: db9a1d4e1e90b804aad4c5a8d308bf65, type: 3}
-  m_PrefabInstance: {fileID: 7231396596699593098}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2121797957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37082,11 +37062,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab733755fb977b14a95831930e9596fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collect_Items
-  PlayerInventory: {fileID: 949337107}
-  MessageText: {fileID: 0}
-  MessageContainer: {fileID: 0}
   UiControler: {fileID: 949337106}
   LootWindow: {fileID: 2083025050}
+--- !u!114 &2121797958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121797952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4e9d0363605e7346b88f63032b8eb4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  BaseHealth: 100
+  BaseStamina: 100
+  BaseArmour: 1
+  BaseDamage: 1
+  BaseSpeed: 3
 --- !u!114 &2122708779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38452,6 +38446,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1427592921671225607, guid: db9a1d4e1e90b804aad4c5a8d308bf65, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2121797957}
+    - targetCorrespondingSourceObject: {fileID: 1427592921671225607, guid: db9a1d4e1e90b804aad4c5a8d308bf65, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2121797958}
   m_SourcePrefab: {fileID: 100100000, guid: db9a1d4e1e90b804aad4c5a8d308bf65, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
