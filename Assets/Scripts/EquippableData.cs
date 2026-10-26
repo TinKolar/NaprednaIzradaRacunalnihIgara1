@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//Sve sto se moze equipat (oprema i oruzje). Bonusi se zbrajaju u Player_Controler.RecalculateStats.
+//Sve sto se moze equipat (oprema i oruzje). Bonusi idu u PlayerStats kao modifieri (PlayerStats.ApplyEquipment).
 public abstract class EquippableData : ItemData
 {
     public EquipType EquipType;

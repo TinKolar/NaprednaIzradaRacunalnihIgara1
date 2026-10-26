@@ -24,61 +24,43 @@ public class UI_Controler : MonoBehaviour
     public TMP_Text InventoryArmour;
     public TMP_Text InventorySpeed;
 
-    public UnityEvent OnChangedHealth;
-    public UnityEvent OnChangedMaxHP;
     public UnityEvent OnChangedRuples;
-    public UnityEvent OnChangedDamage;
-    public UnityEvent OnChangedArmour;
-    public UnityEvent OnChangedSpeed;
 
-    public Animator PlayerAnimator;
     public GameObject Tooltip;
+    private PlayerStats _stats;
+
     private void Start()
     {
         OnChangedRuples.AddListener(_changeRuple);
-        OnChangedMaxHP.AddListener(_changeMaxHP);
-        OnChangedHealth.AddListener(_changeHealth);
-        OnChangedDamage.AddListener(_changeDamage);
-        OnChangedArmour.AddListener(_changeArmour);
-        OnChangedSpeed.AddListener(_changeSpeed);
-
-        OnChangedMaxHP.Invoke();
-        OnChangedHealth.Invoke();
         OnChangedRuples.Invoke();
-        OnChangedDamage.Invoke();
-        OnChangedArmour.Invoke();
-        OnChangedSpeed.Invoke();       
+
+        //atributi se sami osvjeze kad se stat promijeni
+        _stats = GameObject.Find("Player").GetComponent<PlayerStats>();
+        _stats.Health.CurrentChanged += _changeHealth;
+        _stats.Armour.Changed += value => InventoryArmour.text = Mathf.RoundToInt(value).ToString();
+        _stats.Damage.Changed += value => InventoryDamage.text = Mathf.RoundToInt(value).ToString();
+        _stats.Speed.Changed += value => InventorySpeed.text = Mathf.RoundToInt(value).ToString();
+
+        _changeHealth(_stats.Health.Current, _stats.Health.Max);
+        InventoryArmour.text = Mathf.RoundToInt(_stats.Armour.Value).ToString();
+        InventoryDamage.text = Mathf.RoundToInt(_stats.Damage.Value).ToString();
+        InventorySpeed.text = Mathf.RoundToInt(_stats.Speed.Value).ToString();
     }
-  
-    private void _changeHealth()
-    {        
-        if(Player_Controler.CurrentHealth > Player_Controler.MaxHealth)
-        {
-            Player_Controler.CurrentHealth = Player_Controler.MaxHealth;
-        }
-        InventoryHealth.text = Player_Controler.CurrentHealth.ToString();
-    }
-    private void _changeMaxHP()
+
+    private void OnDestroy()
     {
-        InventoryMaxHP.text = Player_Controler.MaxHealth.ToString();
+        //UI moze nestati prije playera, pa se odjavi da event ne zove unisteni objekt
+        if (_stats != null) _stats.Health.CurrentChanged -= _changeHealth;
+    }
+
+    private void _changeHealth(float current, float max)
+    {
+        InventoryHealth.text = Mathf.RoundToInt(current).ToString();
+        InventoryMaxHP.text = Mathf.RoundToInt(max).ToString();
     }
     private void _changeRuple()
     {
         InventoryRuples.text = Player_Controler.RupleCurrency.ToString();
-    }
-    private void _changeDamage()
-    {
-        //osnovna steta + steta oruzja
-        InventoryDamage.text = Player_Controler.Damage.ToString();
-    }
-    private void _changeArmour()
-    {
-        InventoryArmour.text = Player_Controler.Armour.ToString();
-    }
-    private void _changeSpeed()
-    {
-        InventorySpeed.text = Player_Controler.Speed.ToString();
-        PlayerAnimator.speed = Player_Controler.Speed;
     }
 
     void Update()

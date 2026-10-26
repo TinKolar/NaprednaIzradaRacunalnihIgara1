@@ -5,58 +5,16 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(PlayerStats))]
 public class Player_Controler : MonoBehaviour
 {
-    public static int MaxHealth { get; set; } = 100;
-    public static int CurrentHealth { get; set; } = 50;
     public static int RupleCurrency { get; set; } = 0;
     public static int InventoryCapacity { get; set; } = 32;
-    public static int Damage { get; set; } = 1;
-    //steta trenutno equipanog oruzja (postavlja EquipWeapon)
-    public static int Armour { get; set; } = 1;
-    //Brzina kretanja playera u svim smjerovima. 1 = 16 px u sekundi.
-    public static int Speed { get; set; } = 3;
 
-    //osnovne vrijednosti bez opreme (RecalculateStats = osnova + oprema)
-    public const int BASE_MAX_HEALTH = 100;
-    public const int BASE_ARMOUR = 1;
-    public const int BASE_DAMAGE = 1;
-    public const int BASE_SPEED = 3;
+    //Health, Stamina, Armour, Damage, Speed (osnova + oprema) su u PlayerStats komponenti
+    public PlayerStats Stats { get; private set; }
 
-    //Zbroji bonuse sa sve equipane opreme i osvjezi UI
-    public static void RecalculateStats()
-    {
-        int armour = 0, maxHp = 0, damage = 0, speed = 0;
-        GameObject gm = GameObject.Find("GameManager");
-        if (gm == null) return;
-        Player_Inventory inv = gm.GetComponent<Player_Inventory>();
-        //oruzje se zbraja isto kao i ostala oprema
-        foreach (EquipSlot slot in inv.EquipSlots())
-        {
-            Inventory_LootItem item = slot.Current;
-            if (item == null || !(item.Data is EquippableData)) continue;
-            EquippableData e = (EquippableData)item.Data;
-            armour += e.Armour;
-            maxHp += e.MaxHealth;
-            damage += e.Damage;
-            speed += e.Speed;
-        }
-        Armour = BASE_ARMOUR + armour;
-        MaxHealth = BASE_MAX_HEALTH + maxHp;
-        Damage = BASE_DAMAGE + damage;
-        Speed = BASE_SPEED + speed;
-        if (CurrentHealth > MaxHealth) CurrentHealth = MaxHealth;
-
-        UI_Controler ui = gm.GetComponent<UI_Controler>();
-        ui.OnChangedMaxHP.Invoke();
-        ui.OnChangedHealth.Invoke();
-        ui.OnChangedArmour.Invoke();
-        ui.OnChangedDamage.Invoke();
-        ui.OnChangedSpeed.Invoke();
-    }
     //Stamina se trosi na napade i puni se kad player ne napada
-    public static int MaxStamina { get; set; } = 100;
-    public static float CurrentStamina { get; set; } = 100;
     public float StaminaRegen = 20; //po sekundi
     public float LightAttackStamina = 15;
     public float HeavyAttackStamina = 40;
@@ -88,20 +46,18 @@ public class Player_Controler : MonoBehaviour
     public Transform OffHandSocket; //ako je prazno uzme se lijeva ruka iz animatora
     private GameObject _offHandModel;
 
+    void Awake()
+    {
+        Stats = GetComponent<PlayerStats>();
+    }
+
     void Start()
     {
         _playerNavMeshAgent = this.GetComponent<NavMeshAgent>();
+        Stats.Health.Depleted += Die;
         _playerAnimator = this.GetComponent<Animator>();
-        //_playerAnimator.speed = Speed;
         _playerAnimator.speed = 1;
         _playerAnimator.applyRootMotion = false;
-
-        //static vrijednosti prezive ucitavanje scene, pa ako je player umro vrati mu zivot
-        if (CurrentHealth <= 0)
-        {
-            CurrentHealth = MaxHealth;
-            CurrentStamina = MaxStamina;
-        }
 
         // inspector vrijednosti su prespore za ovo
         _playerNavMeshAgent.angularSpeed = 720;
@@ -122,8 +78,10 @@ public class Player_Controler : MonoBehaviour
             {
                 Inventory_LootItem.Create(CurrentWeapon, 1, inv.WeaponSlot.transform);
             }
-            RecalculateStats(); //damage pocetnog oruzja
         }
+        RefreshEquipment(); //bonusi pocetnog oruzja
+        Stats.Health.Refill();
+        Stats.Stamina.Refill();
     }
 
     //Zamjeni animacije napada i brzinu napada prema oruzju (null = bez oruzja)
@@ -182,7 +140,15 @@ public class Player_Controler : MonoBehaviour
             _offHandModel.transform.localRotation = Quaternion.Euler(offWeapon.HoldRotation);
             foreach (Collider c in _offHandModel.GetComponentsInChildren<Collider>()) Destroy(c);
         }
-        RecalculateStats();
+
+        //bonusi sve equipane opreme (i oruzja) idu u statse kao modifieri
+        List<(object, EquippableData)> equipped = new List<(object, EquippableData)>();
+        foreach (EquipSlot slot in inv.EquipSlots())
+        {
+            Inventory_LootItem item = slot.Current;
+            if (item != null && item.Data is EquippableData) equipped.Add((item, (EquippableData)item.Data));
+        }
+        Stats.ApplyEquipment(equipped);
     }
 
     private AnimationClip currentLightClip()
@@ -205,7 +171,7 @@ public class Player_Controler : MonoBehaviour
 
     private int weaponDamage()
     {
-        return Damage; //damage oruzja je vec u Damage (RecalculateStats)
+        return Mathf.RoundToInt(Stats.Damage.Value); //damage oruzja je vec u Damage (modifier)
     }
 
 
@@ -213,11 +179,7 @@ public class Player_Controler : MonoBehaviour
 
     void Update()
     {
-        //Smrt
-        if (CurrentHealth <= 0 && isDead == false)
-        {
-            Die();
-        }
+        //smrt ide preko Stats.Health.Depleted eventa
         if (isDead == true)
         {
             return;
@@ -226,11 +188,7 @@ public class Player_Controler : MonoBehaviour
         _playerAttack();
         if (isAttacking == false)
         {
-            CurrentStamina = CurrentStamina + StaminaRegen * Time.deltaTime;
-            if (CurrentStamina > MaxStamina)
-            {
-                CurrentStamina = MaxStamina;
-            }
+            Stats.Stamina.Increase(StaminaRegen * Time.deltaTime);
             _playerMovementControl();
             _playerMouseMovement();
         }
@@ -245,6 +203,7 @@ public class Player_Controler : MonoBehaviour
 
     private void Die()
     {
+        if (isDead) return;
         isDead = true;
         isAttacking = false;
         CancelInvoke(); //da ne udari nakon smrti
@@ -283,13 +242,12 @@ public class Player_Controler : MonoBehaviour
         {
             //nista
         }
-        else if (Mouse.current.rightButton.wasPressedThisFrame && CurrentStamina < LightAttackStamina)
+        else if (Mouse.current.rightButton.wasPressedThisFrame && !Stats.Stamina.TryConsume(LightAttackStamina))
         {
             Debug.Log("Not enough stamina!");
         }
         else if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            CurrentStamina = CurrentStamina - LightAttackStamina;
             isAttacking = true;
             //trajanje i trenutak udarca dolaze iz clipa i oruzja
             attackTimer = currentLightClip().length / attackSpeed();
@@ -316,13 +274,12 @@ public class Player_Controler : MonoBehaviour
             Invoke("LightSwingSound", Mathf.Max(0, attackTimer * lightHit - 0.15f));
         }
 
-        if (Keyboard.current.qKey.wasPressedThisFrame && CurrentStamina < HeavyAttackStamina)
+        if (Keyboard.current.qKey.wasPressedThisFrame && !Stats.Stamina.TryConsume(HeavyAttackStamina))
         {
             Debug.Log("Not enough stamina!");
         }
         else if (Keyboard.current.qKey.wasPressedThisFrame)
         {
-            CurrentStamina = CurrentStamina - HeavyAttackStamina;
             isAttacking = true;
             attackTimer = currentHeavyClip().length / attackSpeed();
             isMovingWithKeys = false;
@@ -394,7 +351,7 @@ public class Player_Controler : MonoBehaviour
     private void AoeHit()
     {
         float radius = CurrentWeapon != null ? CurrentWeapon.HeavyRadius : 3.5f;
-        int dmg = CurrentWeapon != null ? weaponDamage() * CurrentWeapon.HeavyDamageMultiplier : Damage;
+        int dmg = CurrentWeapon != null ? weaponDamage() * CurrentWeapon.HeavyDamageMultiplier : weaponDamage();
         Collider[] hits = Physics.OverlapSphere(transform.position, radius);
         for (int i = 0; i < hits.Length; i++)
         {
@@ -408,11 +365,11 @@ public class Player_Controler : MonoBehaviour
 
     private void _playerMovementControl()
     {
-        movementSpeed = Speed * 1.5f;
+        movementSpeed = Stats.Speed.Value * 1.5f;
         //Shift = hodanje (prije je bilo trcanje)
         if (Keyboard.current.leftShiftKey.isPressed)
         {
-            movementSpeed = Speed * 0.5f;
+            movementSpeed = Stats.Speed.Value * 0.5f;
         }
         _playerNavMeshAgent.speed = movementSpeed;
 
@@ -527,7 +484,7 @@ public class Player_Controler : MonoBehaviour
             currentSpeed = _playerNavMeshAgent.velocity.magnitude;
         }
         //1 = run, 0.2 = walk, 0 = idle
-        _playerAnimator.SetFloat("RunBlend", currentSpeed / (Speed * 1.5f), 0.1f, Time.deltaTime);
+        _playerAnimator.SetFloat("RunBlend", currentSpeed / (Stats.Speed.Value * 1.5f), 0.1f, Time.deltaTime);
 
         //koraci - svakih StepDistance metara jedan korak
         if (currentSpeed > 0.3f)
@@ -539,8 +496,5 @@ public class Player_Controler : MonoBehaviour
                 SFX.PlayAt(SFX.Instance.Footsteps, transform.position, 0.6f, 0.15f);
             }
         }
-
-        //UI_Controler stavlja animator speed na Speed pa ga vracamo
-        _playerAnimator.speed = 1;
     }
 }

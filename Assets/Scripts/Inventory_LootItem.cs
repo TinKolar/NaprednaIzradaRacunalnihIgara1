@@ -63,13 +63,12 @@ public class Inventory_LootItem : MonoBehaviour, IPointerClickHandler, IPointerE
     void Drink(ConsumableData potion)
     {
         Player_Controler player = GameObject.Find("Player").GetComponent<Player_Controler>();
-        if (Player_Controler.CurrentHealth >= Player_Controler.MaxHealth || player.isDead)
+        Resource health = player.Stats.Health;
+        if (health.Current >= health.Max || player.isDead)
         {
             return;
         }
-        Player_Controler.CurrentHealth = Mathf.Min(Player_Controler.MaxHealth, Player_Controler.CurrentHealth + potion.HealAmount);
-        UI_Controler ui = GameObject.Find("GameManager").GetComponent<UI_Controler>();
-        ui.OnChangedHealth.Invoke();
+        health.Increase(potion.HealAmount);
         SFX.Play(SFX.Instance.DrinkPotion);
         Amount = Amount - 1;
         RefreshAmount();

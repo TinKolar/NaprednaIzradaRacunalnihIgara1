@@ -109,23 +109,13 @@ public class Loot_Window : MonoBehaviour
             }
         }
 
-        //trazi prazan slot (isto ko u Collect_Items)
+        //trazi prazan slot
         foreach (GameObject slot in Player_Inventory.Inventory)
         {
             if (slot.transform.childCount == 0)
             {
                 GameObject newItem;
-                if (item.InventoryItem != null)
-                {
-                    newItem = Instantiate(item.InventoryItem, slot.transform);
-                    newItem.transform.localPosition = Vector2.zero;
-                    if (newItem.GetComponent<Stack>() != null)
-                    {
-                        newItem.GetComponent<Stack>().StackAmout = item.Amount;
-                        newItem.GetComponent<Stack>().OnValueChanged.Invoke();
-                    }
-                }
-                else if (item.Item != null)
+                if (item.Item != null)
                 {
                     newItem = Inventory_LootItem.Create(item.Item, item.Amount, slot.transform).gameObject;
                 }

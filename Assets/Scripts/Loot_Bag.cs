@@ -7,7 +7,6 @@ public class LootItem
     public ItemData Item;            // oprema, oruzje ili potion (null + Ruples = novac)
     public int Amount = 1;
     public bool Ruples;              // novac nije item, ide ravno u RupleCurrency
-    public GameObject InventoryItem; // stari sustav: prefab za inventory
 
     public string Name
     {
