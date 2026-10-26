@@ -3,7 +3,7 @@ using UnityEngine.AI;
 using TheKiwiCoder;
 
 //Neprijatelj: health, primanje stete (Player_Controler salje SendMessage("TakeDamage")), animacije i smrt
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour , IDamagable
 {
     public int MaxHealth = 30;
     public int Health = 30;

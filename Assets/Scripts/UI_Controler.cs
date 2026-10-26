@@ -27,15 +27,15 @@ public class UI_Controler : MonoBehaviour
     public UnityEvent OnChangedRuples;
 
     public GameObject Tooltip;
-    private PlayerStats _stats;
+    [SerializeField] private PlayerStats _stats;
 
     private void Start()
     {
         OnChangedRuples.AddListener(_changeRuple);
         OnChangedRuples.Invoke();
 
+        if(_stats!=null){
         //atributi se sami osvjeze kad se stat promijeni
-        _stats = GameObject.Find("Player").GetComponent<PlayerStats>();
         _stats.Health.CurrentChanged += _changeHealth;
         _stats.Armour.Changed += value => InventoryArmour.text = Mathf.RoundToInt(value).ToString();
         _stats.Damage.Changed += value => InventoryDamage.text = Mathf.RoundToInt(value).ToString();
@@ -45,6 +45,7 @@ public class UI_Controler : MonoBehaviour
         InventoryArmour.text = Mathf.RoundToInt(_stats.Armour.Value).ToString();
         InventoryDamage.text = Mathf.RoundToInt(_stats.Damage.Value).ToString();
         InventorySpeed.text = Mathf.RoundToInt(_stats.Speed.Value).ToString();
+    }
     }
 
     private void OnDestroy()
