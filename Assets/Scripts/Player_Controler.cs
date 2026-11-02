@@ -311,24 +311,24 @@ public class Player_Controler : MonoBehaviour
         float radius = CurrentWeapon != null ? CurrentWeapon.LightRadius : 1.2f;
         int dmg = weaponDamage();
         Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * range, radius);
-        GameObject closest = null;
+        IDamageable closest = null;
         float closestDistance = 999;
         for (int i = 0; i < hits.Length; i++)
         {
-            if (hits[i].gameObject.tag == "Enemy")
+            if (hits[i].gameObject.TryGetComponent<IDamageable>(out IDamageable enemy))
             {
                 float d = Vector3.Distance(transform.position, hits[i].transform.position);
                 if (d < closestDistance)
                 {
                     closestDistance = d;
-                    closest = hits[i].gameObject;
+                    closest = enemy;
                 }
             }
         }
         if (closest != null)
         {
-            closest.SendMessage("TakeDamage", dmg, SendMessageOptions.DontRequireReceiver);
-            Debug.Log("Hit " + closest.name + " for " + dmg);
+            closest.TakeDamage(dmg);
+            Debug.Log("Hit " + " for " + dmg);
         }
     }
 

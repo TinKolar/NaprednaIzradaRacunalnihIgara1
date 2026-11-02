@@ -10,6 +10,7 @@ public class Player_Inventory : MonoBehaviour
     public static GameObject EmptySlot;
     public static string SlotPointer = "";
     public static string DragedItemType = "";
+
     //Slotovi na igracu
     public GameObject GloveSlot;
     public GameObject HeadSlot;
